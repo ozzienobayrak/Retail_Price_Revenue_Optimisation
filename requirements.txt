@@ -9,5 +9,6 @@ scikit-learn==1.2.2
 altair==5.0.1
 pmdarima==2.0.3
 lightgbm==4.5.0
+streamlit==1.31.0
 pyarrow
 

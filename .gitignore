@@ -1,7 +1,6 @@
 # Data folders
 /data/
 /visuals/
-*.csv
 *.xlsx
 *.parquet
 

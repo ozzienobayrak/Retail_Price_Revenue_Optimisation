@@ -12,7 +12,7 @@ st.set_page_config(page_title="Retail Price Optimizer", layout="wide")
 # Paths
 # -----------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent if "__file__" in globals() else Path.cwd()
-DATA_DIR = BASE_DIR / "data"
+DATA_DIR = BASE_DIR / "data1"
 MODEL_DIR = BASE_DIR / "models"
 
 MODEL_PATH = MODEL_DIR / "lightgbm_model_base.joblib"

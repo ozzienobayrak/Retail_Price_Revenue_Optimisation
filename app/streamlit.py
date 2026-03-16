@@ -470,9 +470,15 @@ st.subheader("Best Price Bundle")
 st.dataframe(prettify_table(best_bundle), use_container_width=True)
 
 st.subheader("Revenue and Sales Simulation")
-fig = plot_price_simulation(sim_table, title=f"{horizon.title()} Simulation for {item_id} in {store_id}")
-st.pyplot(fig, clear_figure=True)
+product_name = name_map[item_id]
 
+
+fig = plot_price_simulation(
+    sim_table,
+    title=f"{horizon.title()} Simulation for {product_name} in {store_id}"
+)
+
+st.pyplot(fig, clear_figure=True)
 st.subheader("Candidate Price Table")
 st.dataframe(prettify_table(sim_table.sort_values("predicted_revenue", ascending=False)), use_container_width=True)
 

@@ -49,17 +49,7 @@ DISPLAY_RENAME = {
     "scenario": "inventory",
 }
 
-#QR code
-def generate_qr_code(url):
-    qr = qrcode.make(url)
-    buf = io.BytesIO()
-    qr.save(buf, format="PNG")
-    buf.seek(0)
-    return buf
 
-APP_URL = "https://your-app-url.streamlit.app"
-
-st.image(generate_qr_code(APP_URL), width=120)
 
 def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
     return df.rename(columns=DISPLAY_RENAME)

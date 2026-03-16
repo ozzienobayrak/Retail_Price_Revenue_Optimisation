@@ -413,8 +413,11 @@ item_id = products.loc[
 
 item_store_df = simulator_df[simulator_df["item_id"] == item_id]
 available_stores = sorted(item_store_df["store_id"].dropna().unique().tolist())
-store_id = st.sidebar.selectbox("Store", available_stores)
-
+store_id = st.sidebar.selectbox("Store",
+                                ["All Stores"] + available_stores)
+if store_id == "All Stores":
+    st.info("Showing results aggregated across all stores.")
+    
 horizon = st.sidebar.selectbox("Period", ["week", "month"])
 scenario = st.sidebar.selectbox("Inventory Scenario", ["Low", "Medium", "High"], index=1)
 

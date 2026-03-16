@@ -485,6 +485,11 @@ st.subheader("Best Price Bundle")
 best_display = best_bundle.copy()
 best_display["item_id"] = best_display["item_id"].map(name_map)
 
+# round columns
+best_display["predicted_sales"] = best_display["predicted_sales"].round(0)
+best_display["feasible_sales"] = best_display["feasible_sales"].round(0)
+best_display["predicted_revenue"] = best_display["predicted_revenue"].round(0)
+
 st.dataframe(prettify_table(best_display), use_container_width=True)
 
 st.subheader("Revenue and Sales Simulation")
@@ -502,6 +507,10 @@ st.subheader("Candidate Price Table")
 
 sim_display = sim_table.copy()
 sim_display["item_id"] = sim_display["item_id"].map(name_map)
+
+sim_display["predicted_sales"] = sim_display["predicted_sales"].round(0)
+sim_display["feasible_sales"] = sim_display["feasible_sales"].round(0)
+sim_display["predicted_revenue"] = sim_display["predicted_revenue"].round(0)
 
 st.dataframe(
     prettify_table(sim_display.sort_values("predicted_revenue", ascending=False)),

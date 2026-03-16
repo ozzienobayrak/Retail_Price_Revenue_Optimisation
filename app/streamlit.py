@@ -471,9 +471,9 @@ best = best_bundle.iloc[0]
 
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Recommended Price", f"{best['candidate_price']:.2f}")
-col2.metric("Predicted Sales", f"{best['predicted_sales']:.0f}").round(0)
-col3.metric("Feasible Sales", f"{best['feasible_sales']:.0f}").round(0)
-col4.metric("Predicted Revenue", f"{best['predicted_revenue']:.0f}").round(0)
+col2.metric("Predicted Sales", f"{best['predicted_sales']:.0f}")
+col3.metric("Feasible Sales", f"{best['feasible_sales']:.0f}")
+col4.metric("Predicted Revenue", f"{best['predicted_revenue']:.0f}")
 
 col5, col6, col7 = st.columns(3)
 col5.metric("Current Price", f"{best['current_price']:.2f}")

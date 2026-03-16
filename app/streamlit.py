@@ -396,6 +396,7 @@ feature_cols = infer_feature_cols(simulator_df)
 # Sidebar controls
 # -----------------------------
 st.sidebar.header("Simulation Controls")
+
 products = pd.DataFrame({
     "item_id": unique_items,
     "product_name": [name_map[item] for item in unique_items]
@@ -413,20 +414,24 @@ item_id = products.loc[
 
 item_store_df = simulator_df[simulator_df["item_id"] == item_id]
 available_stores = sorted(item_store_df["store_id"].dropna().unique().tolist())
-store_id = st.sidebar.selectbox("Store",
-                                ["All Stores"] + available_stores)
-if store_id == "All Stores":
-    st.info("Showing results aggregated across all stores.")
-    
+
+store_id = st.sidebar.selectbox("Store", available_stores)
+
 horizon = st.sidebar.selectbox("Period", ["week", "month"])
 scenario = st.sidebar.selectbox("Inventory Scenario", ["Low", "Medium", "High"], index=1)
 
-price_range = st.sidebar.slider("Price range around current price", 0.6, 1.4, (0.8, 1.2), 0.05)
-n_prices = st.sidebar.slider("Number of candidate prices", 5, 21, 9, 2)
+price_range = st.sidebar.slider(
+    "Price range around current price",
+    0.6, 1.4, (0.8, 1.2), 0.05
+)
+
+n_prices = st.sidebar.slider(
+    "Number of candidate prices",
+    5, 21, 9, 2
+)
 
 st.sidebar.markdown("---")
 summary_level = st.sidebar.selectbox("Optional total summary", ["None", "Store", "State"])
-
 
 # -----------------------------
 # Main app

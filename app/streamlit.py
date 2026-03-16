@@ -12,12 +12,18 @@ st.set_page_config(page_title="Retail Price and Revenue Optimizer", layout="wide
 st.markdown(
     """
     <style>
+    .block-container {
+        padding-top: 0.5rem;
+        padding-bottom: 1rem;
+    }
+
     div[data-testid="stMetric"] {
         background-color: #f9fbfd;
         border: 1px solid #dde7f0;
         padding: 12px;
         border-radius: 10px;
     }
+
     h1, h2, h3 {
         color: #1f4e79;
     }

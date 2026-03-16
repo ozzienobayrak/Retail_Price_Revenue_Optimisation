@@ -373,13 +373,13 @@ feature_cols = infer_feature_cols(simulator_df)
 st.sidebar.header("Simulation Controls")
 
 available_items = sorted(simulator_df["item_id"].dropna().unique().tolist())
-item_id = st.sidebar.selectbox("Item", available_items)
+item_id = st.sidebar.selectbox("Product Name", available_items)
 
 item_store_df = simulator_df[simulator_df["item_id"] == item_id]
 available_stores = sorted(item_store_df["store_id"].dropna().unique().tolist())
 store_id = st.sidebar.selectbox("Store", available_stores)
 
-horizon = st.sidebar.selectbox("Horizon", ["week", "month"])
+horizon = st.sidebar.selectbox("Period", ["week", "month"])
 scenario = st.sidebar.selectbox("Inventory Scenario", ["Low", "Medium", "High"], index=1)
 
 price_range = st.sidebar.slider("Price range around current price", 0.6, 1.4, (0.8, 1.2), 0.05)
@@ -392,9 +392,13 @@ summary_level = st.sidebar.selectbox("Optional total summary", ["None", "Store",
 # -----------------------------
 # Main app
 # -----------------------------
-st.title("Retail Price Optimization Simulator")
-st.caption("Revenue-maximizing price simulation using a LightGBM demand model.")
+with left:
+    st.title("Retail Price Optimization Simulator")
+    st.caption("Revenue-maximizing price simulation using a LightGBM demand model.")
 
+with right:
+    st.image(generate_qr_code(APP_URL), width=110)
+    
 try:
     sim_table, best_bundle = simulate_price_bundle(
         model=model,

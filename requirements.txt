@@ -8,4 +8,5 @@ altair==5.0.1
 matplotlib==3.7.1
 pyarrow
 python-dotenv
+install qrcode[pil]
 

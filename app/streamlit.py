@@ -4,10 +4,27 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 from pathlib import Path
+import io
+import qrcode
 
-st.set_page_config(page_title="Retail Price Optimizer", layout="wide")
+st.set_page_config(page_title="Retail Price and Revenue Optimizer", layout="wide")
 
-
+st.markdown(
+    """
+    <style>
+    div[data-testid="stMetric"] {
+        background-color: #f9fbfd;
+        border: 1px solid #dde7f0;
+        padding: 12px;
+        border-radius: 10px;
+    }
+    h1, h2, h3 {
+        color: #1f4e79;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 # -----------------------------
 # Paths
 # -----------------------------
@@ -31,6 +48,18 @@ DISPLAY_RENAME = {
     "horizon": "period",
     "scenario": "inventory",
 }
+
+#QR code
+def generate_qr_code(url):
+    qr = qrcode.make(url)
+    buf = io.BytesIO()
+    qr.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
+
+APP_URL = "https://your-app-url.streamlit.app"
+
+st.image(generate_qr_code(APP_URL), width=120)
 
 def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
     return df.rename(columns=DISPLAY_RENAME)
@@ -68,7 +97,7 @@ def load_data(simulator_path, inv_week_path, inv_month_path):
 # -----------------------------
 # Helpers
 # -----------------------------
-def get_inventory_cap(
+def get_available_stock(
     item_id,
     store_id,
     horizon,
@@ -144,7 +173,7 @@ def simulate_price_bundle(
     if subset.empty:
         return pd.DataFrame(), pd.DataFrame()
 
-    inventory_cap = get_inventory_cap(
+    available_stock = get_available_stock(
         item_id=item_id,
         store_id=store_id,
         horizon=horizon,
@@ -203,7 +232,7 @@ def simulate_price_bundle(
             raise ValueError("horizon must be 'week' or 'month'")
 
         total_pred_sales = grouped["pred_sales"].sum()
-        feasible_sales = min(total_pred_sales, inventory_cap)
+        feasible_sales = min(total_pred_sales, available_stock)
         predicted_revenue = p * feasible_sales
 
         results.append(
@@ -214,7 +243,7 @@ def simulate_price_bundle(
                 "scenario": scenario,
                 "current_price": current_price,
                 "candidate_price": p,
-                "inventory_cap": inventory_cap,
+                "available_stock": available_stock,
                 "predicted_sales": total_pred_sales,
                 "feasible_sales": feasible_sales,
                 "predicted_revenue": predicted_revenue,
@@ -400,7 +429,7 @@ col4.metric("Predicted Revenue", f"{best['predicted_revenue']:.2f}")
 col5, col6, col7 = st.columns(3)
 col5.metric("Current Price", f"{best['current_price']:.2f}")
 col6.metric("Price Change", f"{best['price_change_pct'] * 100:.1f}%")
-col7.metric("Inventory Cap", f"{best['inventory_cap']:.0f}")
+col7.metric("Available Stock", f"{best['available_stock']:.0f}")
 
 st.subheader("Best Price Bundle")
 st.dataframe(prettify_table(best_bundle), use_container_width=True)

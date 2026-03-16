@@ -25,6 +25,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 # -----------------------------
 # Paths
 # -----------------------------
@@ -43,23 +44,24 @@ CAT_COLS = [
 ]
 
 DISPLAY_RENAME = {
-    "item_id": "product",
-    "store_id": "store",
-    "horizon": "period",
-    "scenario": "inventory",
+    "item_id": "Product",
+    "store_id": "Store",
+    "horizon": "Period",
+    "scenario": "Inventory",
 }
 
-#QR code
 def generate_qr_code(url):
     qr = qrcode.make(url)
     buf = io.BytesIO()
     qr.save(buf, format="PNG")
     buf.seek(0)
-    return buf 
+    return buf
+
 APP_URL = "https://your-app-url.streamlit.app"
 
 def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
     return df.rename(columns=DISPLAY_RENAME)
+
 # -----------------------------
 # Load assets
 # -----------------------------
@@ -67,10 +69,9 @@ def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
 def load_model(model_path: Path):
     return joblib.load(model_path)
 
-
 @st.cache_data
 def load_data(simulator_path, inv_week_path, inv_month_path):
-    simulator_df = pd.read_csv(simulator_path)
+    simulator_df = pd.read_csv(simulator_path, low_memory=False)
     inventory_base_week = pd.read_csv(inv_week_path)
     inventory_base_month = pd.read_csv(inv_month_path)
 
@@ -81,16 +82,37 @@ def load_data(simulator_path, inv_week_path, inv_month_path):
             + simulator_df["month"].astype(str).str.zfill(2)
         )
 
-    CAT_COLS = [
-        "item_id", "dept_id", "cat_id", "store_id", "state_id",
-        "weekday", "event_name_1", "event_type_1", "event_name_2", "event_type_2"
-    ]
-
     for col in CAT_COLS:
         if col in simulator_df.columns:
             simulator_df[col] = simulator_df[col].astype("category")
 
     return simulator_df, inventory_base_week, inventory_base_month
+
+try:
+    model = load_model(MODEL_PATH)
+    simulator_df, inventory_base_week, inventory_base_month = load_data(
+        SIMULATOR_PATH, INV_WEEK_PATH, INV_MONTH_PATH
+    )
+except Exception as e:
+    st.error(f"Failed to load app assets: {e}")
+    st.stop()
+
+food_names = [
+    "Pasta", "Tomato Sauce", "Olive Oil", "Rice", "Brown Bread",
+    "Cheddar Cheese", "Milk", "Yogurt", "Butter", "Chicken Breast",
+    "Salmon", "Frozen Pizza", "Ice Cream", "Chocolate Bar", "Granola",
+    "Cereal", "Orange Juice", "Coffee", "Green Tea", "Apple Juice",
+    "Strawberry Jam", "Peanut Butter", "Honey", "Almonds", "Walnuts"
+]
+
+unique_items = sorted(simulator_df["item_id"].astype(str).unique())
+
+name_map = {
+    item: f"{food_names[i % len(food_names)]} {i+1}"
+    for i, item in enumerate(unique_items)
+}
+
+simulator_df["product_name"] = simulator_df["item_id"].astype(str).map(name_map)
 # -----------------------------
 # Helpers
 # -----------------------------
@@ -369,8 +391,17 @@ feature_cols = infer_feature_cols(simulator_df)
 # -----------------------------
 st.sidebar.header("Simulation Controls")
 
-available_items = sorted(simulator_df["item_id"].dropna().unique().tolist())
-item_id = st.sidebar.selectbox("Product Name", available_items)
+products = simulator_df[["item_id", "product_name"]].drop_duplicates()
+
+product_choice = st.sidebar.selectbox(
+    "Product",
+    products["product_name"].tolist()
+)
+
+item_id = products.loc[
+    products["product_name"] == product_choice,
+    "item_id"
+].iloc[0]
 
 item_store_df = simulator_df[simulator_df["item_id"] == item_id]
 available_stores = sorted(item_store_df["store_id"].dropna().unique().tolist())

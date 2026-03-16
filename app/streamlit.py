@@ -467,7 +467,11 @@ col6.metric("Price Change", f"{best['price_change_pct'] * 100:.1f}%")
 col7.metric("Available Stock", f"{best['available_stock']:.0f}")
 
 st.subheader("Best Price Bundle")
-st.dataframe(prettify_table(best_bundle), use_container_width=True)
+
+best_display = best_bundle.copy()
+best_display["item_id"] = best_display["item_id"].map(name_map)
+
+st.dataframe(prettify_table(best_display), use_container_width=True)
 
 st.subheader("Revenue and Sales Simulation")
 product_name = name_map[item_id]
@@ -479,8 +483,16 @@ fig = plot_price_simulation(
 )
 
 st.pyplot(fig, clear_figure=True)
+
 st.subheader("Candidate Price Table")
-st.dataframe(prettify_table(sim_table.sort_values("predicted_revenue", ascending=False)), use_container_width=True)
+
+sim_display = sim_table.copy()
+sim_display["item_id"] = sim_display["item_id"].map(name_map)
+
+st.dataframe(
+    prettify_table(sim_display.sort_values("predicted_revenue", ascending=False)),
+    use_container_width=True
+)
 
 if summary_level != "None":
     st.subheader(f"Total Optimized Revenue by {summary_level}")

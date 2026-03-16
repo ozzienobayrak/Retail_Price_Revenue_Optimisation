@@ -392,6 +392,7 @@ summary_level = st.sidebar.selectbox("Optional total summary", ["None", "Store",
 # -----------------------------
 # Main app
 # -----------------------------
+left, right = st.columns([8,1])
 with left:
     st.title("Retail Price Optimization Simulator")
     st.caption("Revenue-maximizing price simulation using a LightGBM demand model.")

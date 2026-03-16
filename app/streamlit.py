@@ -24,6 +24,16 @@ CAT_COLS = [
     "item_id", "dept_id", "cat_id", "store_id", "state_id",
     "weekday", "event_name_1", "event_type_1", "event_name_2", "event_type_2"
 ]
+
+DISPLAY_RENAME = {
+    "item_id": "product",
+    "store_id": "store",
+    "horizon": "period",
+    "scenario": "inventory",
+}
+
+def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
+    return df.rename(columns=DISPLAY_RENAME)
 # -----------------------------
 # Load assets
 # -----------------------------
@@ -393,14 +403,14 @@ col6.metric("Price Change", f"{best['price_change_pct'] * 100:.1f}%")
 col7.metric("Inventory Cap", f"{best['inventory_cap']:.0f}")
 
 st.subheader("Best Price Bundle")
-st.dataframe(best_bundle, use_container_width=True)
+st.dataframe(prettify_table(best_bundle), use_container_width=True)
 
 st.subheader("Revenue and Sales Simulation")
 fig = plot_price_simulation(sim_table, title=f"{horizon.title()} Simulation for {item_id} in {store_id}")
 st.pyplot(fig, clear_figure=True)
 
 st.subheader("Candidate Price Table")
-st.dataframe(sim_table.sort_values("predicted_revenue", ascending=False), use_container_width=True)
+st.dataframe(prettify_table(sim_table.sort_values("predicted_revenue", ascending=False)), use_container_width=True)
 
 if summary_level != "None":
     st.subheader(f"Total Optimized Revenue by {summary_level}")
@@ -442,13 +452,15 @@ if summary_level != "None":
         total_rev = summary_df["predicted_revenue"].sum()
         st.metric(f"Total optimized revenue for {label}", f"{total_rev:.2f}")
         st.dataframe(
-            summary_df[[
+            prettify_table(
+                summary_df[[
                 "item_id",
                 "store_id",
                 "candidate_price",
                 "predicted_sales",
                 "feasible_sales",
                 "predicted_revenue",
-            ]].sort_values("predicted_revenue", ascending=False),
+            ]].sort_values("predicted_revenue", ascending=False)
+            ),
             use_container_width=True,
         )

@@ -390,8 +390,10 @@ feature_cols = infer_feature_cols(simulator_df)
 # Sidebar controls
 # -----------------------------
 st.sidebar.header("Simulation Controls")
-
-products = simulator_df[["item_id", "product_name"]].drop_duplicates()
+products = pd.DataFrame({
+    "item_id": unique_items,
+    "product_name": [name_map[item] for item in unique_items]
+})
 
 product_choice = st.sidebar.selectbox(
     "Product",

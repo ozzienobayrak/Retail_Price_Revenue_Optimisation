@@ -471,14 +471,14 @@ best = best_bundle.iloc[0]
 
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Recommended Price", f"{best['candidate_price']:.2f}")
-col2.metric("Predicted Sales", f"{best['predicted_sales']:.1f}")
-col3.metric("Feasible Sales", f"{best['feasible_sales']:.1f}")
-col4.metric("Predicted Revenue", f"{best['predicted_revenue']:.2f}")
+col2.metric("Predicted Sales", f"{best['predicted_sales']:.0f}").round(0)
+col3.metric("Feasible Sales", f"{best['feasible_sales']:.0f}").round(0)
+col4.metric("Predicted Revenue", f"{best['predicted_revenue']:.0f}").round(0)
 
 col5, col6, col7 = st.columns(3)
 col5.metric("Current Price", f"{best['current_price']:.2f}")
 col6.metric("Price Change", f"{best['price_change_pct'] * 100:.1f}%")
-col7.metric("Available Stock", f"{best['available_stock']:.0f}")
+col7.metric("Available Stock", f"{best['available_stock']:.0f}").round(0)
 
 st.subheader("Best Price Bundle")
 
@@ -545,7 +545,7 @@ if summary_level != "None":
     if summary_df.empty:
         st.info("No summary results available for this selection.")
     else:
-        total_rev = summary_df["predicted_revenue"].sum()
+        total_rev = round(summary_df["predicted_revenue"].sum(), 0)
         st.metric(f"Total optimized revenue for {label}", f"{total_rev:.2f}")
         st.dataframe(
             prettify_table(

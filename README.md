@@ -34,7 +34,7 @@ The system consists of three main components.
 A **LightGBM regression model** predicts product demand using:
 
 - lagged sales features
-- rolling demand statistics
+- rolling sales features
 - price features
 - calendar variables
 - categorical store and product identifiers

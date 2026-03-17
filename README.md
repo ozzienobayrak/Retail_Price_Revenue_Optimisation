@@ -63,7 +63,7 @@ The final application allows users to:
 
 - select a **product**
 - choose a **store**
-- choose a **pricing horizon** (weekly or monthly)
+- choose a **time period** (weekly or monthly)
 - set an **inventory scenario**
 
 The tool then simulates pricing outcomes and returns:

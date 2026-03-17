@@ -1,5 +1,5 @@
 # Retail_Price_Revenue_Optimisation
-
+https://ozzienobayrak-retail-price-revenue-optimisa-appstreamlit-0xfpzl.streamlit.app/
 # Retail Price Optimization with Machine Learning
 
 A machine learning system for **demand predicting and revenue-maximizing price simulation** in retail environments.
@@ -128,8 +128,8 @@ This allows the simulator to evaluate pricing under different supply conditions.
 
 # Key Features
 
-- demand forecasting with machine learning
-- price simulation engine
+- demand prediction with machine learning
+- price simulation 
 - revenue optimization
 - inventory-constrained demand modeling
 - weekly and monthly revenue evaluation
@@ -167,7 +167,7 @@ Possible extensions include:
 
 # Dataset
 
-This project uses the **Walmart Sales Forecasting dataset**, which contains historical sales data across products, stores, and time.
+This project uses the Food Products subset of **Walmart Sales Forecasting dataset**, which contains historical sales data across products, stores, and time.
 
 ---
 

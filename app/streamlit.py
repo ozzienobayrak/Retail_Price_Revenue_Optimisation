@@ -49,6 +49,8 @@ CAT_COLS = [
     "weekday", "event_name_1", "event_type_1", "event_name_2", "event_type_2"
 ]
 
+#Renaming column names-better this way instead of changing names everywhere
+
 DISPLAY_RENAME = {
     "item_id": "Product",
     "store_id": "Store",
@@ -56,6 +58,11 @@ DISPLAY_RENAME = {
     "scenario": "Inventory",
 }
 
+
+def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
+    return df.rename(columns=DISPLAY_RENAME)
+
+#QR Code
 def generate_qr_code(url):
     qr = qrcode.make(url)
     buf = io.BytesIO()
@@ -65,11 +72,8 @@ def generate_qr_code(url):
 
 APP_URL = "https://ozzienobayrak-retail-price-revenue-optimisa-appstreamlit-0xfpzl.streamlit.app/"
 
-def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
-    return df.rename(columns=DISPLAY_RENAME)
-
 # -----------------------------
-# Load assets
+# Load model and data
 # -----------------------------
 @st.cache_resource
 def load_model(model_path: Path):
@@ -90,7 +94,7 @@ def load_data(simulator_path, inv_week_path, inv_month_path):
 
     for col in CAT_COLS:
         if col in simulator_df.columns:
-            simulator_df[col] = simulator_df[col].astype("category")
+            simulator_df[col] = simulator_df[col].astype("category") #categories disappear when saved in csv and load. 
 
     return simulator_df, inventory_base_week, inventory_base_month
 
@@ -103,6 +107,7 @@ except Exception as e:
     st.error(f"Failed to load app assets: {e}")
     st.stop()
 
+    #fake product names to make app more real!
 food_names = [
     "Pasta", "Tomato Sauce", "Olive Oil", "Rice", "Brown Bread",
     "Cheddar Cheese", "Milk", "Yogurt", "Butter", "Chicken Breast",
@@ -120,7 +125,7 @@ name_map = {
 
 simulator_df["product_name"] = simulator_df["item_id"].astype(str).map(name_map)
 # -----------------------------
-# Helpers
+# Helper apps
 # -----------------------------
 def get_available_stock(
     item_id,
@@ -174,7 +179,7 @@ def infer_feature_cols(df: pd.DataFrame) -> list[str]:
     feature_cols = [c for c in df.columns if c not in exclude]
     return feature_cols
 
-
+# summary table for the chosen product
 def simulate_price_bundle(
     model,
     simulator_df,
@@ -284,7 +289,7 @@ def simulate_price_bundle(
 
     return sim_table, best_bundle
 
-
+#ploting simulation prices against predicted sales&revenue
 def plot_price_simulation(sim_table: pd.DataFrame, title: str):
     fig, ax = plt.subplots(figsize=(8, 5))
 
@@ -325,7 +330,7 @@ def plot_price_simulation(sim_table: pd.DataFrame, title: str):
     fig.tight_layout()
     return fig
 
-
+#summary table for chosen product for different price levels
 def summarize_store_or_state(
     model,
     simulator_df,

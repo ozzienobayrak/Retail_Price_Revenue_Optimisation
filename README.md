@@ -29,7 +29,7 @@ This project builds a **data-driven pricing simulator** that enables dynamic pri
 
 The system consists of three main components.
 
-## 1️⃣ Demand Forecasting Model
+## 1️⃣ Demand Predicting Model
 
 A **LightGBM regression model** predicts product demand using:
 

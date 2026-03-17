@@ -56,6 +56,13 @@ DISPLAY_RENAME = {
     "store_id": "Store",
     "horizon": "Period",
     "scenario": "Inventory",
+    "current_price": "Current Price",
+    "candidate_price": "Candidate Price",
+    "available_stock": "Available Stock",
+    "predicted_sales": "Predicted Sales",
+    "feasible_sales": "Feasible Sales",
+    "predicted_revenue": "Predicted Revenue",
+    "price_change_pct": "Price Change %",
 }
 
 

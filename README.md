@@ -114,36 +114,6 @@ This allows the simulator to evaluate pricing under different supply conditions.
 
 ---
 
-# Repository Structure
-
-```
-retail-price-optimization
-│
-├── data
-│   ├── simulator_df.csv
-│   ├── inventory_base_week.csv
-│   └── inventory_base_month.csv
-│
-├── models
-│   └── lightgbm_model_base.joblib
-│
-├── notebooks
-│   └── PriceSimulator.ipynb
-│
-├── app
-│   └── streamlit_app.py
-│
-├── src
-│   ├── simulation.py
-│   ├── inventory.py
-│   └── plotting.py
-│
-├── requirements.txt
-└── README.md
-```
-
----
-
 # Technologies Used
 
 - Python

@@ -16,12 +16,12 @@ Retailers constantly face the challenge of setting prices that maximize revenue 
 
 - changing demand
 - inventory limitations
-- heterogeneous product behavior
+- heterogeneous products
 - store-level variation
 
 Traditional approaches often rely on static pricing rules or simple elasticity estimates.
 
-This project builds a **data-driven pricing simulator** that enables dynamic price exploration using machine learning demand forecasts.
+This project builds a **data-driven pricing simulator** that enables dynamic price exploration using machine learning demand estimates.
 
 ---
 

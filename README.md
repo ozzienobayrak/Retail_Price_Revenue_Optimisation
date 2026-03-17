@@ -2,7 +2,7 @@
 
 # Retail Price Optimization with Machine Learning
 
-A machine learning system for **demand forecasting and revenue-maximizing price simulation** in retail environments.
+A machine learning system for **demand predicting and revenue-maximizing price simulation** in retail environments.
 
 This project builds a **LightGBM demand prediction model** and deploys an **interactive price simulator** that recommends optimal prices under different inventory scenarios.
 

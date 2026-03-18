@@ -69,6 +69,15 @@ DISPLAY_RENAME = {
 def prettify_table(df: pd.DataFrame) -> pd.DataFrame:
     return df.rename(columns=DISPLAY_RENAME)
 
+#QR Code
+def generate_qr_code(url):
+    qr = qrcode.make(url)
+    buf = io.BytesIO()
+    qr.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
+
+APP_URL = "https://ozzienobayrak-retail-price-revenue-optimisa-appstreamlit-0xfpzl.streamlit.app/"
 
 # -----------------------------
 # Load model and data

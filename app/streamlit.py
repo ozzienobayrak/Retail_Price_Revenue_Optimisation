@@ -348,7 +348,7 @@ def plot_price_simulation(sim_table: pd.DataFrame, title: str):
     )
 
     ax.set_xlabel("Candidate Price ($)")
-    ax.set_ylabel("Revenue ($))
+    ax.set_ylabel("Revenue ($)")
     ax.set_title(title)
     ax.legend()
     fig.tight_layout()

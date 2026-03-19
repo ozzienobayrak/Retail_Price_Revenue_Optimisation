@@ -488,10 +488,7 @@ try:
         scenario=scenario,
         grid_low=price_range[0],
         grid_high=price_range[1],
-        n_prices=n_prices,
-        selected_year=selected_year,
-        selected_month=selected_month,
-        selected_week=selected_week,
+        n_prices=n_prices
     )
         
 except Exception as e:

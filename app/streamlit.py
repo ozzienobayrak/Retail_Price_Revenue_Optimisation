@@ -187,6 +187,7 @@ def infer_feature_cols(df: pd.DataFrame) -> list[str]:
     return feature_cols
 
 # summary table for the chosen product
+# summary table for the chosen product 
 def simulate_price_bundle(
     model,
     simulator_df,
@@ -201,34 +202,11 @@ def simulate_price_bundle(
     grid_high=1.2,
     n_prices=9,
     price_col="sell_price",
-    period_scope="all",      # "all", "last", "selected"
-    selected_year=None,
-    selected_month=None,
-    selected_week=None,
 ):
     subset = simulator_df[
         (simulator_df["item_id"] == item_id)
         & (simulator_df["store_id"] == store_id)
     ].copy()
-
-    if subset.empty:
-        return pd.DataFrame(), pd.DataFrame()
-
-    # Optional filtering before simulation
-    if period_scope == "selected":
-        if selected_year is not None and "year" in subset.columns:
-            subset = subset[subset["year"] == selected_year]
-
-        if horizon == "month":
-            if selected_month is not None:
-                if "month" in subset.columns:
-                    subset = subset[subset["month"] == selected_month]
-                elif "month_key" in subset.columns:
-                    subset = subset[subset["month_key"] == selected_month]
-
-        elif horizon == "week":
-            if selected_week is not None and "wm_yr_wk" in subset.columns:
-                subset = subset[subset["wm_yr_wk"] == selected_week]
 
     if subset.empty:
         return pd.DataFrame(), pd.DataFrame()
@@ -262,9 +240,7 @@ def simulate_price_bundle(
         if "price_pct_change_1" in x_sim.columns:
             if "price_lag_1" in x_sim.columns:
                 denom = x_sim["price_lag_1"].replace(0, np.nan)
-                x_sim["price_pct_change_1"] = (
-                    (x_sim[price_col] - x_sim["price_lag_1"]) / denom
-                )
+                x_sim["price_pct_change_1"] = (x_sim[price_col] - x_sim["price_lag_1"]) / denom
                 x_sim["price_pct_change_1"] = x_sim["price_pct_change_1"].fillna(0.0)
             else:
                 x_sim["price_pct_change_1"] = 0.0
@@ -283,48 +259,25 @@ def simulate_price_bundle(
         if horizon == "week":
             grouped = (
                 x_sim.groupby(["item_id", "store_id", "wm_yr_wk"], observed=True)
-                .agg(
-                    pred_sales=("pred_sales", "sum"),
-                    pred_revenue=("pred_revenue", "sum"),
-                )
+                .agg(pred_sales=("pred_sales", "sum"), pred_revenue=("pred_revenue", "sum"))
                 .reset_index()
             )
-            period_col = "wm_yr_wk"
+            latest_period = grouped["wm_yr_wk"].max()
+            grouped = grouped[grouped["wm_yr_wk"] == latest_period]
 
         elif horizon == "month":
             grouped = (
                 x_sim.groupby(["item_id", "store_id", "month_key"], observed=True)
-                .agg(
-                    pred_sales=("pred_sales", "sum"),
-                    pred_revenue=("pred_revenue", "sum"),
-                )
+                .agg(pred_sales=("pred_sales", "sum"), pred_revenue=("pred_revenue", "sum"))
                 .reset_index()
             )
-            period_col = "month_key"
+            latest_period = grouped["month_key"].max()
+            grouped = grouped[grouped["month_key"] == latest_period]
 
         else:
             raise ValueError("horizon must be 'week' or 'month'")
 
-        if grouped.empty:
-            continue
-
-        if period_scope == "last":
-            selected_period = grouped[period_col].max()
-            grouped_eval = grouped[grouped[period_col] == selected_period].copy()
-
-        elif period_scope == "selected":
-            # already filtered earlier, so grouped should contain only chosen period(s)
-            if horizon == "week":
-                selected_period = selected_week
-            else:
-                selected_period = selected_month
-            grouped_eval = grouped.copy()
-
-        else:  # "all"
-            selected_period = "all"
-            grouped_eval = grouped.copy()
-
-        total_pred_sales = grouped_eval["pred_sales"].sum()
+        total_pred_sales = grouped["pred_sales"].sum()
         feasible_sales = min(total_pred_sales, available_stock)
         predicted_revenue = p * feasible_sales
 
@@ -334,9 +287,6 @@ def simulate_price_bundle(
                 "store_id": store_id,
                 "horizon": horizon,
                 "scenario": scenario,
-                "period_scope": period_scope,
-                "selected_year": selected_year,
-                "selected_period": selected_period,
                 "current_price": current_price,
                 "candidate_price": p,
                 "available_stock": available_stock,
@@ -398,7 +348,7 @@ def plot_price_simulation(sim_table: pd.DataFrame, title: str):
     )
 
     ax.set_xlabel("Candidate Price ($)")
-    ax.set_ylabel("Revenue ($) / Units")
+    ax.set_ylabel("Revenue ($))
     ax.set_title(title)
     ax.legend()
     fig.tight_layout()
@@ -498,42 +448,6 @@ available_stores = sorted(item_store_df["store_id"].dropna().unique().tolist())
 store_id = st.sidebar.selectbox("Store", available_stores)
 
 horizon = st.sidebar.selectbox("Period", ["week", "month"])
-
-filtered_item_store = simulator_df[
-    (simulator_df["item_id"] == item_id) &
-    (simulator_df["store_id"] == store_id)
-].copy()
-
-if "date" in filtered_item_store.columns:
-    filtered_item_store["date"] = pd.to_datetime(filtered_item_store["date"])
-    if "year" not in filtered_item_store.columns:
-        filtered_item_store["year"] = filtered_item_store["date"].dt.year
-    if "month" not in filtered_item_store.columns:
-        filtered_item_store["month"] = filtered_item_store["date"].dt.month
-
-selected_year = None
-selected_month = None
-selected_week = None
-
-if "year" in filtered_item_store.columns:
-    year_options = sorted(filtered_item_store["year"].dropna().unique().tolist())
-    selected_year = st.sidebar.selectbox("Year", [None] + year_options)
-
-if horizon == "month" and "month" in filtered_item_store.columns:
-    month_df = filtered_item_store.copy()
-    if selected_year is not None:
-        month_df = month_df[month_df["year"] == selected_year]
-
-    month_options = sorted(month_df["month"].dropna().unique().tolist())
-    selected_month = st.sidebar.selectbox("Month", [None] + month_options)
-
-elif horizon == "week" and "wm_yr_wk" in filtered_item_store.columns:
-    week_df = filtered_item_store.copy()
-    if selected_year is not None and "year" in week_df.columns:
-        week_df = week_df[week_df["year"] == selected_year]
-
-    week_options = sorted(week_df["wm_yr_wk"].dropna().unique().tolist())
-    selected_week = st.sidebar.selectbox("Week", [None] + week_options)
     
 scenario = st.sidebar.selectbox("Inventory Scenario", ["Low", "Medium", "High"], index=1)
 

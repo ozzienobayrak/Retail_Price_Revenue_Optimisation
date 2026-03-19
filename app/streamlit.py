@@ -186,7 +186,7 @@ def infer_feature_cols(df: pd.DataFrame) -> list[str]:
     feature_cols = [c for c in df.columns if c not in exclude]
     return feature_cols
 
-# summary table for the chosen product
+
 # summary table for the chosen product 
 def simulate_price_bundle(
     model,
@@ -312,7 +312,7 @@ def simulate_price_bundle(
 #ploting simulation prices against predicted sales&revenue
 from matplotlib.ticker import FuncFormatter
 
-from matplotlib.ticker import FuncFormatter
+
 
 def plot_price_simulation(sim_table: pd.DataFrame, title: str):
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -502,13 +502,13 @@ if sim_table.empty or best_bundle.empty:
 best = best_bundle.iloc[0]
 
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Recommended Price", f"{best['candidate_price']:.2f}")
+col1.metric("Recommended Price", f"{best['candidate_price'].map(lambda x: f"${x:.2f}")
 col2.metric("Predicted Sales", f"{best['predicted_sales']:.0f}")
 col3.metric("Feasible Sales", f"{best['feasible_sales']:.0f}")
-col4.metric("Predicted Revenue", f"{best['predicted_revenue']:.0f}")
+col4.metric("Predicted Revenue", f"{best['predicted_revenue'].map(lambda x: f"${x:.0f}")
 
 col5, col6, col7 = st.columns(3)
-col5.metric("Current Price", f"{best['current_price']:.2f}")
+col5.metric("Current Price", f"{best['current_price'].map(lambda x: f"${x:.2f}")
 col6.metric("Price Change", f"{best['price_change_pct'] * 100:.1f}%")
 col7.metric("Available Stock", f"{best['available_stock']:.0f}")
 

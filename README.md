@@ -1,4 +1,4 @@
-# Retail_Price_Revenue_Optimisation
+# Revenue Optimization through Dynamic Pricing
 https://ozzienobayrak-retail-price-revenue-optimisa-appstreamlit-0xfpzl.streamlit.app/
 # Retail Price Optimization with Machine Learning
 
